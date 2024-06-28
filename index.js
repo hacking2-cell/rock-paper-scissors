@@ -1,78 +1,85 @@
-
-const choices = ["rock", "paper", "scissors"];
+const rockBtn = document.querySelector('#choiceRock');
+const paperBtn = document.querySelector('#choicePaper');
+const scissorsBtn = document.querySelector('#choiceScissors');
+const winnerText = document.querySelector('#winner');
+const humanScoreText = document.querySelector('#humanScore');
+const computerScoreText = document.querySelector('#computerScore');
+const restartBtn = document.querySelector('#restart');
+const choices = ["✊", "✋", "✌"];
 
 function getComputerChoice() {
-
     const randomIndex = Math.floor(Math.random() * choices.length);
         return choices[randomIndex];
 };
+    let humanScore = 0;
+    let computerScore = 0;  
+    let roundWinner;
+/*
+ rockBtn.addEventListener('click', ()=> { getHumanChoice('✊')});
+ paperBtn.addEventListener('click', ()=> { getHumanChoice('✋')});
+ scissorsBtn.addEventListener('click', ()=> { getHumanChoice('✌')});
+*/
+    function playRound(humanChoice, computerChoice) {
+        
+            if (humanChoice === computerChoice) {
+                roundWinner = `${humanChoice} It's a tie! ${computerChoice}`;
+            } else if (humanChoice === "✊" && computerChoice === "✌" ||
+                       humanChoice === "✋" && computerChoice === "✊" ||
+                       humanChoice === "✌" && computerChoice === "✋") {
+                roundWinner = `You win ${humanChoice} beats ${computerChoice}`;
+                humanScore++
+            } else {
+                roundWinner = `You lose ${computerChoice} beats ${humanChoice}`;
+                computerScore++
+            }
+        
+            winnerText.textContent = `WINNER: ${roundWinner}`;
+            
+            humanScoreText.textContent = `YOUR SCORE: ${humanScore}`;
+            
+            computerScoreText.textContent = `COMPUTER SCORE: ${computerScore}`;
 
-function getHumanChoice() {
-
-     while (true) {
-         const choice = prompt('Please enter "rock", "paper" or "scissors."').toLowerCase();
-         if (choices.includes(choice)) {
-            return choice;
-         } else {
-            prompt('Please enter a correct choice "rock", "paper" or "scissors."');
-         };
-     };
-};
-
-const emojiMap = {
-    rock: "✊",
-    paper: "✋",
-    scissors: "✌"
-  };
+        
+        
+    };
    
 
-  
-
-
-function playGame() {
-
-    let humanScore = 0;
-    let computerScore = 0;
-    function playRound(humanChoice, computerChoice) {
-
-        let humanEmoji = emojiMap[humanChoice];
-        let computerEmoji = emojiMap[computerChoice];
-        let winner;
-    
-        if (humanChoice === computerChoice) {
-            winner = `${humanEmoji} It's a tie! ${computerEmoji}`;
-        } else if (humanChoice === "rock" && computerChoice === "scissors" ||
-                   humanChoice === "paper" && computerChoice === "rock" ||
-                   humanChoice === "scissors" && computerChoice === "paper") {
-            winner = `You win ${humanEmoji} beats ${computerEmoji}`;
-            humanScore++
-        } else {
-            winner = `You lose ${computerEmoji} beats ${humanEmoji}`;
-            computerScore++
-        }
-        return winner;
-    };
-
-    for (let i = 0; i < 5; i++) {
-        const humanSelection = getHumanChoice();
-        const computerSelection = getComputerChoice();
-        const result= playRound(humanSelection, computerSelection);
-        console.log(result);
-        console.log(`Your Score: ${humanScore}`);
-        console.log(`Computer Score: ${computerScore}`);
+restartBtn.addEventListener('click', () => {
+        computerScore = 0;
+        humanScore = 0;
+        roundWinner = "";
+        winnerText.textContent = `WINNER: ${roundWinner}`;
         
-        if (i === 4) {
-            let finalWinner;
-            if (computerScore > humanScore) {
-                finalWinner = `You lose the match ${computerScore} - ${humanScore}`;
-                
-            } else  {
-                finalWinner = `You win the match ${humanScore} - ${computerScore}`;
-            }
-            console.log(finalWinner)
-        }
-    };
-    
-};
+        humanScoreText.textContent = `YOUR SCORE: ${humanScore}`;
+        
+        computerScoreText.textContent = `COMPUTER SCORE: ${computerScore}`;
+        rockBtn.disabled = false;
+        paperBtn.disabled = false;
+        scissorsBtn.disabled = false;
+        
+});
 
-playGame()
+const buttons = [rockBtn, paperBtn, scissorsBtn];
+
+buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+        const playerSelection = button.textContent;
+        const computerSelection = getComputerChoice();
+        playRound(playerSelection, computerSelection);
+        checkForWinner();
+    });
+
+})
+
+function checkForWinner() {
+    if (humanScore >= 5 || computerScore >= 5) {
+        rockBtn.disabled = true;
+        paperBtn.disabled = true;
+        scissorsBtn.disabled = true;
+        if (humanScore === 5) {
+            winnerText.textContent = `YOU WIN THE MATCH!`;
+        } else {
+            winnerText.textContent = `YOU LOSE THE MATCH!`;
+        }
+    }
+};
